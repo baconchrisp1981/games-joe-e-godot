@@ -1,7 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://lab_level"]
+[gd_scene load_steps=6 format=3 uid="uid://lab_level"]
 
 [ext_resource type="PackedScene" uid="uid://player" path="res://resources/scenes/levels/player.tscn" id="1]
 [ext_resource type="PackedScene" uid="uid://enemy" path="res://resources/scenes/levels/basic_enemy.tscn" id="2]
+[ext_resource type="PackedScene" uid="uid://powerup_health" path="res://resources/scenes/levels/powerup_health.tscn" id="3]
+[ext_resource type="PackedScene" uid="uid://powerup_speed" path="res://resources/scenes/levels/powerup_speed.tscn" id="4]
+[ext_resource type="PackedScene" uid="uid://powerup_damage" path="res://resources/scenes/levels/powerup_damage.tscn" id="5]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.156863, 0.172549, 0.254902, 1)
@@ -126,6 +129,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.5, 5)
 
 [node name="Enemy3" parent="." instance=ExtResource("2")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 15)
+
+[node name="PowerUpHealth" parent="." instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 0.5, 0)
+
+[node name="PowerUpHealth2" parent="." instance=ExtResource("3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.5, 0)
+
+[node name="PowerUpSpeed" parent="." instance=ExtResource("4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -5)
+
+[node name="PowerUpDamage" parent="." instance=ExtResource("5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0.5, -12)
 
 [node name="OverheadCamera" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0.1)

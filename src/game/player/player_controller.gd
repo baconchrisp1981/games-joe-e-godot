@@ -1,10 +1,17 @@
 extends CharacterBody3D
 
-const SPEED = 5.0
-const RUN_SPEED = 8.0
+const BASE_SPEED = 5.0
+const BASE_RUN_SPEED = 8.0
 const JUMP_VELOCITY = 4.5
 const MOUSE_SENSITIVITY = 0.003
 const ATTACK_COOLDOWN = 0.5
+const ATTACK_DAMAGE = 25
+
+# Powerup effects
+var speed_multiplier = 1.0
+var damage_multiplier = 1.0
+var speed_boost_timer = 0.0
+var damage_boost_timer = 0.0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -42,6 +49,17 @@ func _input(event):
 		perform_attack()
 
 func _physics_process(delta):
+	# Update powerup timers
+	if speed_boost_timer > 0:
+		speed_boost_timer -= delta
+		if speed_boost_timer <= 0:
+			speed_multiplier = 1.0
+	
+	if damage_boost_timer > 0:
+		damage_boost_timer -= delta
+		if damage_boost_timer <= 0:
+			damage_multiplier = 1.0
+	
 	# Add gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -50,28 +68,29 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	
-	# Apply movement
-	if direction:
-		velocity.x = direction.x * (RUN_SPEED if is_running else SPEED)
-		velocity.z = direction.z * (RUN_SPEED if is_running else SPEED)
-	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+	# Apply movement with speed multiplier
+	var current_speed = (BASE_RUN_SPEED if is_running else BASE_SPEED) * speed_multiplier
 	
-	# Attack cooldown
-	if not can_attack:
-		can_attack = true
+	if direction:
+		velocity.x = direction.x * current_speed
+		velocity.z = direction.z * current_speed
+	else:
+		velocity.x = move_toward(velocity.x, 0, current_speed)
+		velocity.z = move_toward(velocity.z, 0, current_speed)
 	
 	move_and_slide()
 
 func perform_attack():
 	can_attack = false
 	
+	# Calculate damage with multiplier
+	var actual_damage = int(ATTACK_DAMAGE * damage_multiplier)
+	
 	# Check for enemies in attack area
 	var bodies = attack_area.get_overlapping_bodies()
 	for body in bodies:
 		if body.has_method("take_damage"):
-			body.take_damage(25)
+			body.take_damage(actual_damage)
 	
 	# Visual feedback - simple tween scale
 	var tween = create_tween()
@@ -81,6 +100,14 @@ func perform_attack():
 	# Cooldown timer
 	await get_tree().create_timer(ATTACK_COOLDOWN).timeout
 	can_attack = true
+
+func apply_speed_boost(amount: float):
+	speed_multiplier = amount
+	speed_boost_timer = 10.0  # 10 seconds
+
+func apply_damage_boost(amount: float):
+	damage_multiplier = amount
+	damage_boost_timer = 10.0  # 10 seconds
 
 func take_damage(amount):
 	health -= amount
