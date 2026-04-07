@@ -48,6 +48,8 @@ func apply_powerup(player):
 		Type.DAMAGE:
 			player.apply_damage_boost(amount)
 			print("Damage boost!")
+	
+	AudioManager.play_sound("powerup")
 
 func _on_body_exited(body):
 	pass

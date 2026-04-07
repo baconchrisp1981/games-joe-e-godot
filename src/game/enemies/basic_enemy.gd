@@ -56,6 +56,7 @@ func attack_player():
 
 func take_damage(amount):
 	health -= amount
+	AudioManager.play_sound("hit")
 	# Flash red
 	var mesh = $MeshInstance3D
 	var original_color = mesh.get_active_material(0).albedo_color if mesh.get_surface_override_material(0) else Color.GRAY
@@ -68,4 +69,5 @@ func take_damage(amount):
 		die()
 
 func die():
+	AudioManager.play_sound("enemy_death")
 	queue_free()

@@ -91,6 +91,7 @@ func perform_attack():
 	for body in bodies:
 		if body.has_method("take_damage"):
 			body.take_damage(actual_damage)
+			AudioManager.play_sound("attack")
 	
 	# Visual feedback - simple tween scale
 	var tween = create_tween()
@@ -111,10 +112,12 @@ func apply_damage_boost(amount: float):
 
 func take_damage(amount):
 	health -= amount
+	AudioManager.play_sound("hit")
 	if health <= 0:
 		die()
 
 func die():
+	AudioManager.play_sound("player_death")
 	# Simple respawn for now
 	health = max_health
 	position = Vector3(0, 1, 0)
